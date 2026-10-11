@@ -9,7 +9,7 @@
 [![Email](https://img.shields.io/badge/Email-1981033510%40qq.com-2b6cb0?logo=maildotru&logoColor=white)](mailto:1981033510@qq.com)
 [![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white)](#)
 [![PyTorch](https://img.shields.io/badge/PyTorch-EE4C2C?logo=pytorch&logoColor=white)](#)
-[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)](#)
+[![C++](https://img.shields.io/badge/C%2B%2B-00599C?logo=cplusplus&logoColor=white)](#)
 
 </div>
 
