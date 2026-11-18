@@ -49,14 +49,32 @@
   - 评测日志记录了全部 85 组实验，包括未采用的方案。
 - 局限：轻代价档在三个数据集上都高于默认配置（+0.015 到 +0.038），但测试集上的置信区间含 0；跳转到错误物体仍是主要损失，是下一阶段的工作。
 
-### [MultiAgentOS](https://github.com/CaryHe-maker/MultiAgentOS) — 模块化的 Agent 编排与执行系统
+### [MultiAgentOS](https://github.com/CaryHe-maker/MultiAgentOS) — 多 Agent 编排与执行系统
 
-`TypeScript` `Node.js` `pnpm monorepo`
+`TypeScript` `Node.js` `pnpm monorepo` `DeepSeek`
 
-三人协作项目，处于早期阶段。系统将业务推进（Workflow）与授权、调度、执行（Kernel）分离：模型只能提出动作，是否执行由 Kernel 裁决；跨模块数据均经过运行时 Schema 校验。
+三人协作项目，当前版本 [M2 V1.1](https://github.com/CaryHe-maker/MultiAgentOS/tree/m2-v1.1)。系统像操作系统管理进程一样管理 Agent：业务推进（Workflow）与授权、调度、执行、计费（Kernel）分离，模型只能提出动作，是否执行由 Kernel 裁决；跨模块数据均经过运行时 Schema 校验。
 
-- **当前里程碑（M1）**：只读的仓库分析系统，由 Planner 与 CodeViewer 两个 Agent 接力，输出带代码来源的结构化报告
-- **进度**：已完成架构文档、接口契约、Agent / Tool 定义目录，以及基于 fake 组件的端到端装配链路；真实的 Agent 循环仍在实现中（`feat/M1` 分支）
+- **两种模式**：
+  - **Turn-chat**：在本地仓库上持续对话；
+  - **Mission**：把一个目标做到交付，根 Agent 规划、把能并行的部分派给 worker / lead / explorer / 专家子 Agent（至多三层），检查后交付；
+  - 对话里用 `/mission <目标>` 可以把大目标交给 Mission，它代替对话工作到结束。
+- **安全与资源**：
+  - 命令跑在 bubblewrap 沙盒里；写入、命令、联网都要用户授权；
+  - 并行子任务的写入范围两两不相交，由 Kernel 强制；
+  - 额度按运行、输入、任务三级记账，按需逐级借用，不够时先问用户。
+- **可回退**：每条输入与长任务中的派生前、答复后都有 checkpoint，支持 `/undo`、回到 checkpoint、进程退出后续跑；会话状态由只追加日志重建。
+
+与 DeepSeek 官方单 Agent Harness 对照（同一模型、同一镜像、同一判分）：
+
+| 自建的 5 道大任务（Lua 解释器、SQL 引擎、关系数据库、归档工具、综述） | 总用时（分钟） | 平均分 | 费用（美元） |
+|---|:---:|:---:|:---:|
+| MultiAgentOS（Mission） | **87.8** | 0.917 | 1.76 |
+| DeepSeek Harness | 126.6 | 0.931 | 1.07 |
+
+- 5 道都更快，总用时少约 31%；平均分差距几乎全部来自一道题（同一版本重跑一次即得满分）；费用约 1.6 倍，是多 Agent 并行的代价。
+- 小任务（Terminal-Bench 2、SWE-Bench Pro）上通过数与 Harness 相同（8/8 对 8/8）。
+- 共 2679 个自动化测试；验收测试从终端一路跑到真实的 Executor 子进程，只把模型 API 换成脚本。
 - **我的分工**：Workflow、kernel、lease、用户交互与 CLI、基础设施（通信、存储、装配）和测试工具
 
 ### 其他
